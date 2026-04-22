@@ -20,54 +20,67 @@
           <stop offset="0%" stop-color="#1ABC9C"/>
           <stop offset="100%" stop-color="#16A085"/>
         </linearGradient>
-        <linearGradient id="redGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#E74C3C"/>
-          <stop offset="100%" stop-color="#C0392B"/>
+        <linearGradient id="redGrad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#C0392B"/>
+          <stop offset="100%" stop-color="#E74C3C"/>
         </linearGradient>
-        <clipPath id="cylinderClip"><rect x="175" y="130" width="150" height="190" rx="0"/></clipPath>
       </defs>
 
       <rect x="0" y="0" width="600" height="450" fill="#2D2D2D"/>
-
-      <!-- BASE CYLINDER GROUP (can wobble) -->
-      <g id="cylinder-group" clip-path="url(#cylinderClip)">
-        <!-- Main body -->
-          <rect id="cyl-body" x="175" y="200" width="150" height="120" fill="url(#tealGrad)" stroke="white" stroke-width="2"/>
-          <!-- Bottom ellipse -->
-          <ellipse id="cyl-bot" cx="250" cy="320" rx="75" ry="25" fill="#16A085" stroke="white" stroke-width="2"/>
-          <!-- Top ellipse -->
-          <ellipse id="cyl-top" cx="250" cy="200" rx="75" ry="25" fill="#1ABC9C" stroke="white" stroke-width="2"/>
+      <g stroke="#3a3a3a" stroke-width="0.5">
+        <line x1="0" y1="100" x2="600" y2="100"/><line x1="0" y1="200" x2="600" y2="200"/>
+        <line x1="0" y1="300" x2="600" y2="300"/><line x1="150" y1="0" x2="150" y2="450"/>
+        <line x1="250" y1="0" x2="250" y2="450"/><line x1="350" y1="0" x2="350" y2="450"/>
+        <line x1="450" y1="0" x2="450" y2="450"/>
       </g>
 
-      <!-- RED UNFOLDED PART -->
-      <g id="unfolded-group">
-        <!-- Top ellipse (detached) -->
-          <ellipse id="red-top-ell" cx="250" cy="130" rx="75" ry="25" fill="#E74C3C" stroke="white" stroke-width="2" style="display:none"/>
+      <!-- CYLINDER GROUP (wobbles) -->
+      <g id="cyl-group">
+
+        <!-- BASE: original short cylinder (always visible) -->
+        <g id="base-cyl">
+          <rect x="175" y="200" width="150" height="120" fill="url(#tealGrad)" stroke="white" stroke-width="2"/>
+          <ellipse cx="250" cy="320" rx="75" ry="25" fill="#16A085" stroke="white" stroke-width="2"/>
+          <ellipse cx="250" cy="200" rx="75" ry="25" fill="#1ABC9C" stroke="white" stroke-width="2"/>
+        </g>
+
+        <!-- ADDED HEIGHT: top section (green, appears on "上升") -->
+        <g id="top-cyl" style="display:none">
+          <!-- Green body for added height -->
+          <rect id="top-body" x="175" y="130" width="150" height="70" fill="url(#tealGrad)" stroke="white" stroke-width="2"/>
+          <!-- Green top ellipse -->
+          <ellipse id="top-ell" cx="250" cy="130" rx="75" ry="25" fill="#1ABC9C" stroke="white" stroke-width="2"/>
+          <!-- Bottom of added section (hidden by base top) -->
+          <ellipse cx="250" cy="200" rx="75" ry="25" fill="#16A085" stroke="white" stroke-width="2"/>
+        </g>
+
+        <!-- RED SKIN: peels off to the left when slider moves -->
+        <g id="peel-group" style="display:none">
+          <!-- The peeling skin - curves from cylinder to flat rect going LEFT -->
+          <!-- Flat rectangle portion -->
+          <rect id="flat-rect" x="175" y="130" width="0" height="70" fill="url(#redGrad)" stroke="white" stroke-width="2"/>
           
-          <!-- Unfolded rectangle (starts at top ellipse right edge, extends right) -->
-          <g id="flat-rect-group" style="display:none">
-            <rect id="flat-rect" x="325" y="105" width="0" height="70" fill="url(#redGrad)" stroke="white" stroke-width="2"/>
-            <!-- Dimension labels -->
-            <text id="dim-label" x="0" y="0" fill="white" font-size="14" font-weight="bold" style="display:none">2πr × h</text>
-          </g>
+          <!-- Curve connecting flat rect to cylinder (bezier path) -->
+          <path id="peel-curve" d="" fill="url(#redGrad)" stroke="white" stroke-width="2"/>
+        </g>
+
+        <!-- Green top ellipse that stays on top when peeling -->
+        <ellipse id="floating-top" cx="250" cy="130" rx="75" ry="25" fill="#1ABC9C" stroke="white" stroke-width="2" style="display:none"/>
       </g>
 
       <!-- DATA LABELS -->
       <g id="data-labels" style="display:none">
-        <!-- 原高 -->
-          <line x1="340" y1="200" x2="340" y2="320" stroke="#1ABC9C" stroke-width="2" stroke-dasharray="5,3"/>
-          <line x1="335" y1="200" x2="345" y2="200" stroke="#1ABC9C" stroke-width="2"/>
-          <line x1="335" y1="320" x2="345" y2="320" stroke="#1ABC9C" stroke-width="2"/>
-          <text x="350" y="265" fill="#1ABC9C" font-size="14" font-weight="bold">原高=10cm</text>
-        
-        <!-- 增高 -->
-          <line x1="375" y1="130" x2="375" y2="200" stroke="#E74C3C" stroke-width="2" stroke-dasharray="5,3"/>
-          <line x1="370" y1="130" x2="380" y2="130" stroke="#E74C3C" stroke-width="2"/>
-          <line x1="370" y1="200" x2="380" y2="200" stroke="#E74C3C" stroke-width="2"/>
-          <text x="385" y="170" fill="#E74C3C" font-size="14" font-weight="bold">增高=5cm</text>
-        
-        <!-- 增加的表面积 -->
-          <text x="250" y="400" text-anchor="middle" fill="#FFD700" font-size="18" font-weight="bold">增加的表面积 = 628 cm²</text>
+        <line x1="340" y1="200" x2="340" y2="320" stroke="#1ABC9C" stroke-width="2" stroke-dasharray="5,3"/>
+        <line x1="335" y1="200" x2="345" y2="200" stroke="#1ABC9C" stroke-width="2"/>
+        <line x1="335" y1="320" x2="345" y2="320" stroke="#1ABC9C" stroke-width="2"/>
+        <text x="350" y="265" fill="#1ABC9C" font-size="14" font-weight="bold">原高=10cm</text>
+
+        <line x1="375" y1="130" x2="375" y2="200" stroke="#E74C3C" stroke-width="2" stroke-dasharray="5,3"/>
+        <line x1="370" y1="130" x2="380" y2="130" stroke="#E74C3C" stroke-width="2"/>
+        <line x1="370" y1="200" x2="380" y2="200" stroke="#E74C3C" stroke-width="2"/>
+        <text x="385" y="170" fill="#E74C3C" font-size="14" font-weight="bold">增高=5cm</text>
+
+        <text x="250" y="400" text-anchor="middle" fill="#FFD700" font-size="18" font-weight="bold">增加的表面积 = 628 cm²</text>
       </g>
     </svg>
 
@@ -110,128 +123,112 @@ const btnRise = document.getElementById('btn-rise');
 const btnReset = document.getElementById('btn-reset');
 const btnData = document.getElementById('btn-data');
 const sliderGroup = document.getElementById('slider-group');
-
-const cylGroup = document.getElementById('cylinder-group');
-const cylBody = document.getElementById('cyl-body');
-const cylTop = document.getElementById('cyl-top');
-const unfoldedGroup = document.getElementById('unfolded-group');
-const redTopEll = document.getElementById('red-top-ell');
-const flatGroup = document.getElementById('flat-rect-group');
+const cylGroup = document.getElementById('cyl-group');
+const topCyl = document.getElementById('top-cyl');
+const topBody = document.getElementById('top-body');
+const topEll = document.getElementById('top-ell');
+const peelGroup = document.getElementById('peel-group');
 const flatRect = document.getElementById('flat-rect');
-const dimLabel = document.getElementById('dim-label');
+const peelCurve = document.getElementById('peel-curve');
+const floatingTop = document.getElementById('floating-top');
 const dataLabels = document.getElementById('data-labels');
 const dataPanel = document.getElementById('data-panel');
 
-let risen = false;
-let showingData = false;
-let wobbleTime = 0;
-let animationId = null;
+const CX = 250, CY_TOP = 130, CY_BOT = 200, RX = 75, RY = 25, BODY_H = 70;
+let risen = false, showingData = false;
+let wobbleId = null, wobbleStart = 0;
 
 // === RISE ===
 btnRise.addEventListener('click', () => {
   if (risen) return;
   risen = true;
-  redTopEll.style.display = 'block';
-  flatGroup.style.display = 'none';
   btnRise.style.display = 'none';
   btnReset.style.display = 'inline-block';
   sliderGroup.style.opacity = '1';
   sliderGroup.style.pointerEvents = 'auto';
 
-  // Animate red top ellipse appearing
-  let op = 0;
-  const riseAnim = setInterval(() => {
-    op += 0.08;
-    if (op >= 1) { op = 1; clearInterval(riseAnim); }
-    redTopEll.style.opacity = op;
-    redTopEll.setAttribute('cy', 200 - op * 70);
-  }, 20);
+  // Animate cylinder growing taller - all green
+  topCyl.style.display = 'block';
+  let h = 0;
+  const anim = setInterval(() => {
+    h += 3;
+    if (h >= BODY_H) { h = BODY_H; clearInterval(anim); }
+    topBody.setAttribute('y', CY_BOT - h);
+    topBody.setAttribute('height', h);
+    topEll.setAttribute('cy', CY_BOT - h);
+  }, 16);
 });
 
 // === RESET ===
 btnReset.addEventListener('click', () => {
   risen = false;
   slider.value = 0;
-  redTopEll.style.display = 'none';
-  flatGroup.style.display = 'none';
-  dimLabel.style.display = 'none';
+  topCyl.style.display = 'none';
+  peelGroup.style.display = 'none';
+  floatingTop.style.display = 'none';
   btnRise.style.display = 'inline-block';
   btnReset.style.display = 'none';
   sliderGroup.style.opacity = '0.3';
   sliderGroup.style.pointerEvents = 'none';
-
-  // Reset cylinder position
   cylGroup.setAttribute('transform', '');
+  if (wobbleId) cancelAnimationFrame(wobbleId);
 });
 
-// === SLIDER (with wobble) ===
+// === SLIDER ===
 slider.addEventListener('input', (e) => {
   if (!risen) return;
   const p = e.target.value / 100;
 
-  if (p <= 0.03) {
-    // Fully wrapped state
-    redTopEll.style.display = 'block';
-    flatGroup.style.display = 'none';
-    dimLabel.style.display = 'none';
+  if (p <= 0.02) {
+    // Fully wrapped: show green top cylinder, hide peel
+    topCyl.style.display = 'block';
+    peelGroup.style.display = 'none';
+    floatingTop.style.display = 'none';
   } else {
-    // Unfolding: flat rect extends right
-    redTopEll.style.display = 'block';
-    flatGroup.style.display = 'block';
-    
-    const maxW = 220;
-    const w = (p - 0.03) / 0.97 * maxW;
-    const h = 70;
-    const startX = 325;
+    // Peeling: hide green top body, show red skin peeling left
+    topCyl.style.display = 'none';
+    peelGroup.style.display = 'block';
+    floatingTop.style.display = 'block';
 
-    flatRect.setAttribute('x', startX);
-    flatRect.setAttribute('y', 130);
+    const maxW = 200; // max flat rect width
+    const w = (p - 0.02) / 0.98 * maxW;
+
+    // Flat rectangle extends to the LEFT from cylinder left edge
+    flatRect.setAttribute('x', 175 - w);
+    flatRect.setAttribute('y', CY_TOP);
     flatRect.setAttribute('width', w);
-    flatRect.setAttribute('height', h);
+    flatRect.setAttribute('height', BODY_H);
 
-    // Show dimension label when partially unfolded
-    if (p > 0.4) {
-      dimLabel.style.display = 'block';
-      dimLabel.setAttribute('x', startX + w / 2);
-      dimLabel.setAttribute('y', 130 + h / 2 + 8);
-    } else {
-      dimLabel.style.display = 'none';
-    }
+    // Curve from left edge of flat rect back to cylinder surface
+    // Bezier curve: starts flat at left rect edge, curves down to cylinder left edge
+    const startX = 175 - w;
+    const curveLen = Math.min(30, w * 0.3);
+    peelCurve.setAttribute('d',
+      `M ${startX} ${CY_TOP} ` +
+      `C ${startX + curveLen * 0.3} ${CY_TOP - 20}, ${175 - curveLen * 0.5} ${CY_TOP - 15}, 175 ${CY_TOP} ` +
+      `L 175 ${CY_BOT} ` +
+      `C ${175 - curveLen * 0.5} ${CY_BOT + 15}, ${startX + curveLen * 0.3} ${CY_BOT + 20}, ${startX} ${CY_BOT} ` +
+      `Z`
+    );
 
-    // Add wobble to cylinder when sliding
     startWobble();
   }
 });
 
-// Wobble effect
+// === WOBBLE ===
 function startWobble() {
-  wobbleTime = Date.now();
-  if (animationId) cancelAnimationFrame(animationId);
-  animateWobble();
+  wobbleStart = Date.now();
+  if (wobbleId) cancelAnimationFrame(wobbleId);
+  doWobble();
 }
 
-function animateWobble() {
-  const elapsed = Date.now() - wobbleTime;
-  const wobble = Math.sin(elapsed * 0.008) * 3; // Gentle oscillation
-  
-  cylGroup.setAttribute('transform', `rotate(${wobble} 250 200)`);
-  
-  // Check if still moving slider
-  if (Date.now() - wobbleTime < 200) {
-    animationId = requestAnimationFrame(animateWobble);
-  }
+function doWobble() {
+  const t = Date.now() - wobbleStart;
+  const angle = Math.sin(t * 0.012) * 2.5 * Math.max(0, 1 - t / 600);
+  cylGroup.setAttribute('transform', `rotate(${angle} 250 250)`);
+  if (t < 600) wobbleId = requestAnimationFrame(doWobble);
+  else cylGroup.setAttribute('transform', '');
 }
-
-// Stop wobble when not sliding
-slider.addEventListener('mouseup', () => {
-  if (animationId) cancelAnimationFrame(animationId);
-  cylGroup.setAttribute('transform', '');
-});
-
-slider.addEventListener('mouseleave', () => {
-  if (animationId) cancelAnimationFrame(animationId);
-  cylGroup.setAttribute('transform', '');
-});
 
 // === SHOW DATA ===
 btnData.addEventListener('click', () => {
