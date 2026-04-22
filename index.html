@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>圆柱体侧面积演示 | Cylinder Lateral Surface Area Demo</title>
+<meta name="description" content="圆柱体侧面积可视化演示 - 演示矩形如何卷曲形成圆柱体侧面">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>🔵 圆柱体侧面积演示</h1>
+    <p>Cylinder Lateral Surface Area Visualization</p>
+  </header>
+
+  <main class="demo-area">
+    <!-- SVG Visualization -->
+    <svg class="visualization" viewBox="0 0 400 350">
+      <!-- Background grid -->
+      <defs>
+        <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+          <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#444" stroke-width="0.5"/>
+        </pattern>
+      </defs>
+      <rect x="0" y="0" width="400" height="350" fill="url(#grid)"/>
+
+      <!-- Base teal cylinder (bottom part) -->
+      <g id="cylinder-base">
+        <!-- Bottom ellipse -->
+        <ellipse cx="200" cy="260" rx="80" ry="30" fill="#1ABC9C" stroke="white" stroke-width="2"/>
+        <!-- Rectangle body -->
+        <rect x="120" y="120" width="160" height="140" fill="#1ABC9C" stroke="white" stroke-width="2"/>
+        <!-- Top ellipse (covered by wrap) -->
+        <ellipse cx="200" cy="120" rx="80" ry="30" fill="#1ABC9C" stroke="white" stroke-width="2"/>
+      </g>
+
+      <!-- Red wrap strip (animates from flat to wrapped) -->
+      <g id="wrap-strip">
+        <!-- The strip that wraps around cylinder -->
+        <rect id="strip" x="50" y="30" width="300" height="40" fill="#C0392B" stroke="white" stroke-width="2" rx="5" ry="5"/>
+        
+        <!-- Wrap segments (appear as animation progresses) -->
+        <g id="wrapped-segments" style="opacity:0;transition:opacity 0.3s">
+          <path id="wrap-curve-1" d="M 120 30 Q 100 120 120 120" fill="none" stroke="#C0392B" stroke-width="40" opacity="0"/>
+          <path id="wrap-curve-2" d="M 120 30 Q 150 90 120 120" fill="none" stroke="#C0392B" stroke-width="40" opacity="0"/>
+          <path id="wrap-curve-3" d="M 120 30 Q 200 60 200 90" fill="none" stroke="#C0392B" stroke-width="40" opacity="0"/>
+          <path id="wrap-curve-4" d="M 280 30 Q 250 90 280 120" fill="none" stroke="#C0392B" stroke-width="40" opacity="0"/>
+          <path id="wrap-curve-5" d="M 280 30 Q 300 120 280 120" fill="none" stroke="#C0392B" stroke-width="40" opacity="0"/>
+        </g>
+      </g>
+
+      <!-- Labels -->
+      <text id="label-surface" x="200" y="300" text-anchor="middle" fill="white" font-size="16" font-weight="bold" style="display:none">
+        增加的表面积 = 628cm²
+      </text>
+      <text id="label-slender" x="320" y="140" fill="white" font-size="14" style="display:none">细高 = 10cm</text>
+      <text id="label-thick" x="320" y="165" fill="white" font-size="14" style="display:none">粗高 = 15cm</text>
+      
+      <!-- Height arrows -->
+      <g id="height-arrows" style="display:none">
+        <line x1="310" y1="120" x2="310" y2="260" stroke="white" stroke-width="2" marker-end="url(#arrowhead)"/>
+        <line x1="330" y1="30" x2="330" y2="120" stroke="white" stroke-width="2" marker-end="url(#arrowhead)"/>
+      </g>
+
+      <!-- Arrow marker -->
+      <defs>
+        <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+          <polygon points="0 0, 10 3.5, 0 7" fill="white"/>
+        </marker>
+      </defs>
+    </svg>
+
+    <!-- Data Panel -->
+    <div id="data-panel" class="data-panel" style="display:none">
+      <h3>📊 数据 Data</h3>
+      <div class="data-row">
+        <span class="data-label">圆柱半径 Radius</span>
+        <span class="data-value">10 cm</span>
+      </div>
+      <div class="data-row">
+        <span class="data-label">圆柱高度 Height</span>
+        <span class="data-value">15 cm</span>
+      </div>
+      <div class="data-row">
+        <span class="data-label">周长 Circumference</span>
+        <span class="data-value">62.8 cm</span>
+      </div>
+      <div class="data-row highlight">
+        <span class="data-label">侧面积 Lateral Area</span>
+        <span class="data-value">942 cm²</span>
+      </div>
+      <div class="data-row highlight">
+        <span class="data-label">增加的表面积 Increased Area</span>
+        <span class="data-value">628 cm²</span>
+      </div>
+      <div class="formula">
+        <strong>公式 Formula:</strong><br>
+        S = 2πrh = πdh<br>
+        = 2 × 3.14 × 10 × 15 = 942 cm²
+      </div>
+    </div>
+  </main>
+
+  <!-- Controls -->
+  <div class="controls">
+    <button class="btn btn-primary" id="btn-reset">↻ 上升/复原</button>
+    <button class="btn btn-primary" id="btn-data">📊 显示数据</button>
+    
+    <div class="slider-group">
+      <span class="slider-label">滑块拉杆 (秒):</span>
+      <input type="range" id="slider" min="0" max="100" value="0" class="slider">
+      <span class="slider-value" id="slider-val">0s</span>
+    </div>
+  </div>
+
+  <!-- Formula Info -->
+  <div class="formula-card">
+    <h3>📐 圆柱体侧面积公式</h3>
+    <div class="formula-display">
+      <div class="formula-big">S = 2πrh</div>
+      <div class="formula-desc">
+        S = 侧面积 (Lateral Surface Area)<br>
+        π = 3.14 (圆周率)<br>
+        r = 半径 (Radius)<br>
+        h = 高度 (Height)
+      </div>
+    </div>
+    <p class="formula-note">
+      矩形卷曲形成圆柱体侧面，矩形的长度等于圆柱底面周长(2πr)，宽度等于圆柱高度(h)。
+    </p>
+  </div>
+
+  <footer>
+    <p>圆柱体侧面积可视化演示 © 2026</p>
+  </footer>
+</div>
+
+<script>
+// === Elements ===
+const slider = document.getElementById('slider');
+const sliderVal = document.getElementById('slider-val');
+const btnReset = document.getElementById('btn-reset');
+const btnData = document.getElementById('btn-data');
+const strip = document.getElementById('strip');
+const wrappedSegments = document.getElementById('wrapped-segments');
+const dataPanel = document.getElementById('data-panel');
+const labels = {
+  surface: document.getElementById('label-surface'),
+  slender: document.getElementById('label-slender'),
+  thick: document.getElementById('label-thick'),
+  arrows: document.getElementById('height-arrows')
+};
+
+let animationProgress = 0;
+let isAnimating = false;
+let showingData = false;
+
+// === Animation ===
+slider.addEventListener('input', (e) => {
+  animationProgress = e.target.value / 100;
+  updateAnimation();
+  sliderVal.textContent = Math.round(animationProgress * 3.4) + 's';
+});
+
+function updateAnimation() {
+  const p = animationProgress;
+  
+  // Phase 1: Strip moves down (0-30%)
+  if (p <= 0.3) {
+    const progress = p / 0.3;
+    const y = 30 + progress * 90;
+    strip.setAttribute('y', y);
+    strip.setAttribute('opacity', 1 - progress * 0.3);
+  }
+  
+  // Phase 2: Wrap begins (30-70%)
+  else if (p <= 0.7) {
+    const progress = (p - 0.3) / 0.4;
+    strip.setAttribute('opacity', 0.7);
+    wrappedSegments.style.opacity = progress;
+    
+    // Show wrap segments progressively
+    const segments = wrappedSegments.querySelectorAll('path');
+    segments.forEach((seg, i) => {
+      seg.style.opacity = Math.max(0, progress - i * 0.2);
+    });
+  }
+  
+  // Phase 3: Fully wrapped (70-100%)
+  else {
+    const progress = (p - 0.7) / 0.3;
+    strip.setAttribute('opacity', 0.4);
+    wrappedSegments.style.opacity = 1;
+    
+    // Show labels when fully wrapped
+    if (progress > 0.5) {
+      labels.surface.style.display = 'block';
+      labels.slender.style.display = 'block';
+      labels.thick.style.display = 'block';
+      labels.arrows.style.display = 'block';
+    } else {
+      labels.surface.style.display = 'none';
+      labels.slender.style.display = 'none';
+      labels.thick.style.display = 'none';
+      labels.arrows.style.display = 'none';
+    }
+  }
+}
+
+// === Reset Button ===
+btnReset.addEventListener('click', () => {
+  animationProgress = 0;
+  slider.value = 0;
+  sliderVal.textContent = '0s';
+  strip.setAttribute('y', 30);
+  strip.setAttribute('opacity', 1);
+  wrappedSegments.style.opacity = 0;
+  labels.surface.style.display = 'none';
+  labels.slender.style.display = 'none';
+  labels.thick.style.display = 'none';
+  labels.arrows.style.display = 'none';
+});
+
+// === Show Data Button ===
+btnData.addEventListener('click', () => {
+  showingData = !showingData;
+  dataPanel.style.display = showingData ? 'flex' : 'none';
+  btnData.textContent = showingData ? '🔽 隐藏数据' : '📊 显示数据';
+});
+
+// === Auto Animation Demo ===
+function animateDemo() {
+  if (isAnimating) return;
+  isAnimating = true;
+  
+  let progress = 0;
+  const animate = () => {
+    progress += 0.02;
+    animationProgress = progress;
+    slider.value = progress * 100;
+    sliderVal.textContent = Math.round(progress * 3.4) + 's';
+    updateAnimation();
+    
+    if (progress < 1) {
+      requestAnimationFrame(animate);
+    } else {
+      isAnimating = false;
+    }
+  };
+  animate();
+}
+
+// Click strip to auto-animate
+strip.style.cursor = 'pointer';
+strip.addEventListener('click', animateDemo);
+
+// Initialize
+updateAnimation();
+</script>
+</body>
+</html>
