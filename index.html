@@ -14,24 +14,28 @@
   </header>
 
   <main class="demo-area">
-    <svg class="visualization" viewBox="0 0 500 420">
+    <svg class="visualization" viewBox="0 0 600 420">
       <defs>
         <linearGradient id="tealGrad" x1="0" y1="0" x2="1" y2="1">
           <stop offset="0%" stop-color="#1ABC9C"/>
           <stop offset="100%" stop-color="#16A085"/>
         </linearGradient>
-        <linearGradient id="redGrad" x1="0" y1="0" x2="1" y2="1">
+        <linearGradient id="redGrad" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stop-color="#E74C3C"/>
           <stop offset="100%" stop-color="#C0392B"/>
         </linearGradient>
+        <linearGradient id="redGradH" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#C0392B"/>
+          <stop offset="100%" stop-color="#E74C3C"/>
+        </linearGradient>
       </defs>
 
-      <rect x="0" y="0" width="500" height="420" fill="#2D2D2D"/>
+      <rect x="0" y="0" width="600" height="420" fill="#2D2D2D"/>
       <g stroke="#3a3a3a" stroke-width="0.5">
-        <line x1="0" y1="100" x2="500" y2="100"/><line x1="0" y1="200" x2="500" y2="200"/>
-        <line x1="0" y1="300" x2="500" y2="300"/><line x1="100" y1="0" x2="100" y2="420"/>
-        <line x1="200" y1="0" x2="200" y2="420"/><line x1="300" y1="0" x2="300" y2="420"/>
-        <line x1="400" y1="0" x2="400" y2="420"/>
+        <line x1="0" y1="100" x2="600" y2="100"/><line x1="0" y1="200" x2="600" y2="200"/>
+        <line x1="0" y1="300" x2="600" y2="300"/><line x1="150" y1="0" x2="150" y2="420"/>
+        <line x1="250" y1="0" x2="250" y2="420"/><line x1="350" y1="0" x2="350" y2="420"/>
+        <line x1="450" y1="0" x2="450" y2="420"/>
       </g>
 
       <!-- BASE CYLINDER -->
@@ -41,41 +45,39 @@
         <ellipse cx="250" cy="200" rx="75" ry="25" fill="#1ABC9C" stroke="white" stroke-width="2"/>
       </g>
 
-      <!-- RED TOP CYLINDER (proper cylinder shape) -->
-      <g id="top-cylinder" style="display:none">
-        <!-- Body -->
-        <rect x="175" y="130" width="150" height="70" fill="url(#redGrad)" stroke="white" stroke-width="2"/>
-        <!-- Bottom ellipse (hidden behind base top, but needed for overlap) -->
-        <ellipse cx="250" cy="200" rx="75" ry="25" fill="#C0392B" stroke="white" stroke-width="2"/>
-        <!-- Top ellipse -->
-        <ellipse cx="250" cy="130" rx="75" ry="25" fill="#E74C3C" stroke="white" stroke-width="2"/>
-        <!-- Highlight on body for 3D effect -->
-        <rect x="195" y="132" width="30" height="66" fill="rgba(255,255,255,0.08)" rx="2"/>
-      </g>
+      <!-- RED SECTION - will be animated -->
+      <g id="red-section" style="display:none">
+        <!-- This group contains the red cylinder that can unroll -->
+        
+        <!-- The wrapped part (decreases as slider moves right) -->
+        <g id="wrapped-part">
+          <path id="wrapped-body" d="" fill="url(#redGrad)" stroke="white" stroke-width="2"/>
+          <ellipse id="wrapped-bottom" cx="250" cy="200" rx="75" ry="25" fill="#C0392B" stroke="white" stroke-width="2"/>
+        </g>
 
-      <!-- UNROLLED FLAT RECTANGLE -->
-      <g id="flat-group" style="display:none">
-        <!-- The flat rectangle that slides out from the cylinder top -->
-        <!-- Left curved edge (still attached to cylinder) -->
-        <rect id="flat-rect" x="175" y="105" width="0" height="50" fill="url(#redGrad)" stroke="white" stroke-width="2" rx="3"/>
-        <!-- Dimension labels on the flat rect -->
-        <text id="flat-w-label" x="250" y="135" text-anchor="middle" fill="white" font-size="12" font-weight="bold" style="display:none">2πr</text>
-        <text id="flat-h-label" x="0" y="0" fill="white" font-size="11" style="display:none">h</text>
+        <!-- Top ellipse (always stays) -->
+        <ellipse id="red-top" cx="250" cy="130" rx="75" ry="25" fill="#E74C3C" stroke="white" stroke-width="2"/>
+
+        <!-- The unrolled flat part (appears as slider moves right) -->
+        <g id="flat-part" style="display:none">
+          <rect id="flat-rect" x="325" y="130" width="0" height="70" fill="url(#redGradH)" stroke="white" stroke-width="2"/>
+          <!-- Top edge of flat (connects to top ellipse right edge) -->
+          <line id="flat-top-edge" x1="325" y1="130" x2="325" y2="130" stroke="white" stroke-width="2"/>
+          <!-- Bottom edge -->
+          <line id="flat-bot-edge" x1="325" y1="200" x2="325" y2="200" stroke="white" stroke-width="2"/>
+        </g>
       </g>
 
       <!-- DATA LABELS -->
       <g id="data-labels" style="display:none">
-        <!-- 原高 -->
         <line x1="340" y1="200" x2="340" y2="320" stroke="#1ABC9C" stroke-width="2" stroke-dasharray="5,3"/>
         <line x1="335" y1="200" x2="345" y2="200" stroke="#1ABC9C" stroke-width="2"/>
         <line x1="335" y1="320" x2="345" y2="320" stroke="#1ABC9C" stroke-width="2"/>
         <text x="350" y="265" fill="#1ABC9C" font-size="13" font-weight="bold">原高=10cm</text>
-        <!-- 增高 -->
         <line x1="375" y1="130" x2="375" y2="200" stroke="#E74C3C" stroke-width="2" stroke-dasharray="5,3"/>
         <line x1="370" y1="130" x2="380" y2="130" stroke="#E74C3C" stroke-width="2"/>
         <line x1="370" y1="200" x2="380" y2="200" stroke="#E74C3C" stroke-width="2"/>
         <text x="385" y="170" fill="#E74C3C" font-size="13" font-weight="bold">增高=5cm</text>
-        <!-- 表面积 -->
         <text x="250" y="385" text-anchor="middle" fill="#FFD700" font-size="16" font-weight="bold">增加的表面积 = 628 cm²</text>
       </g>
     </svg>
@@ -98,12 +100,10 @@
     </div>
   </main>
 
-  <!-- Controls -->
   <div class="controls">
     <button class="btn btn-primary" id="btn-rise">⬆ 上升</button>
     <button class="btn btn-reset-btn" id="btn-reset" style="display:none">↻ 复原</button>
     <button class="btn btn-primary" id="btn-data">📊 显示数据</button>
-    
     <div class="slider-group" id="slider-group" style="opacity:0.3;pointer-events:none">
       <span class="slider-label">滑块拉开（右）:</span>
       <input type="range" id="slider" min="0" max="100" value="0" class="slider">
@@ -121,38 +121,138 @@ const btnRise = document.getElementById('btn-rise');
 const btnReset = document.getElementById('btn-reset');
 const btnData = document.getElementById('btn-data');
 const sliderGroup = document.getElementById('slider-group');
-const topCylinder = document.getElementById('top-cylinder');
-const flatGroup = document.getElementById('flat-group');
+const redSection = document.getElementById('red-section');
+const redTop = document.getElementById('red-top');
+const wrappedBody = document.getElementById('wrapped-body');
+const wrappedBottom = document.getElementById('wrapped-bottom');
+const flatPart = document.getElementById('flat-part');
 const flatRect = document.getElementById('flat-rect');
-const flatWLabel = document.getElementById('flat-w-label');
-const flatHLabel = document.getElementById('flat-h-label');
+const flatTopEdge = document.getElementById('flat-top-edge');
+const flatBotEdge = document.getElementById('flat-bot-edge');
 const dataLabels = document.getElementById('data-labels');
 const dataPanel = document.getElementById('data-panel');
 
+const CX = 250, CY_TOP = 130, CY_BOT = 200, RX = 75, RY = 25;
+const BODY_H = CY_BOT - CY_TOP; // 70
+
 let risen = false;
 let showingData = false;
+
+function drawWrapped(angle) {
+  // angle: 0 = fully wrapped (full cylinder), PI = fully unwrapped
+  // The wrapped part goes from the right side, wrapping around left to some point
+  // We'll draw it as an arc segment
+
+  if (angle >= Math.PI * 2 - 0.01) {
+    // Fully wrapped - draw complete cylinder
+    wrappedBody.setAttribute('d',
+      `M ${CX-RX} ${CY_TOP} L ${CX-RX} ${CY_BOT} A ${RX} ${RY} 0 0 0 ${CX+RX} ${CY_BOT} L ${CX+RX} ${CY_TOP} A ${RX} ${RY} 0 0 1 ${CX-RX} ${CY_TOP} Z`
+    );
+    wrappedBottom.setAttribute('cx', CX);
+    wrappedBottom.setAttribute('cy', CY_BOT);
+    wrappedBottom.setAttribute('rx', RX);
+    wrappedBottom.setAttribute('ry', RY);
+    wrappedBottom.style.display = 'block';
+    return;
+  }
+
+  // Draw partial cylinder (from angle 0 = right, going counterclockwise)
+  const wrapAngle = Math.PI * 2 - angle; // remaining wrapped angle
+  if (wrapAngle <= 0.01) {
+    wrappedBody.setAttribute('d', '');
+    wrappedBottom.style.display = 'none';
+    return;
+  }
+
+  // Calculate start and end points on the ellipse
+  // Right side (3 o'clock) = angle 0, going counterclockwise
+  const startAngle = angle; // start unwrapping from here
+  const endAngle = Math.PI * 2; // end at right side
+
+  function ellipsePoint(a) {
+    return {
+      x: CX + RX * Math.cos(a),
+      y: CY_TOP + RY * Math.sin(a) // Note: SVG y is inverted relative to math
+    };
+  }
+
+  // For the body, we need top and bottom ellipse points
+  const p1Top = ellipsePoint(startAngle);
+  const p2Top = ellipsePoint(0); // right side = 0
+  const p1Bot = { x: p1Top.x, y: p1Top.y + BODY_H };
+  const p2Bot = { x: p2Top.x, y: p2Top.y + BODY_H };
+
+  const largeArc = wrapAngle > Math.PI ? 1 : 0;
+
+  // Body path: line down left side, arc along bottom, line up right side, arc along top back
+  const d = `M ${p1Top.x} ${p1Top.y} ` +
+    `L ${p1Bot.x} ${p1Bot.y} ` +
+    `A ${RX} ${RY} 0 ${largeArc} 0 ${p2Bot.x} ${p2Bot.y} ` +
+    `L ${p2Top.x} ${p2Top.y} ` +
+    `A ${RX} ${RY} 0 ${largeArc} 1 ${p1Top.x} ${p1Top.y} Z`;
+
+  wrappedBody.setAttribute('d', d);
+
+  // Bottom ellipse (partial)
+  if (wrapAngle < Math.PI * 2 - 0.1) {
+    wrappedBottom.style.display = 'none';
+  } else {
+    wrappedBottom.style.display = 'block';
+  }
+}
+
+function drawFlat(angle) {
+  if (angle <= 0.01) {
+    flatPart.style.display = 'none';
+    return;
+  }
+
+  flatPart.style.display = 'block';
+
+  // Flat rect extends to the right from the right edge of the top ellipse
+  const startX = CX + RX; // 325
+  const maxW = 250;
+  const w = (angle / (Math.PI * 2)) * (maxW);
+
+  flatRect.setAttribute('x', startX);
+  flatRect.setAttribute('y', CY_TOP);
+  flatRect.setAttribute('width', w);
+  flatRect.setAttribute('height', BODY_H);
+
+  // Connect top ellipse right point to flat rect top
+  flatTopEdge.setAttribute('x1', startX);
+  flatTopEdge.setAttribute('y1', CY_TOP);
+  flatTopEdge.setAttribute('x2', startX + w);
+  flatTopEdge.setAttribute('y2', CY_TOP);
+
+  flatBotEdge.setAttribute('x1', startX);
+  flatBotEdge.setAttribute('y1', CY_BOT);
+  flatBotEdge.setAttribute('x2', startX + w);
+  flatBotEdge.setAttribute('y2', CY_BOT);
+}
 
 // === RISE ===
 btnRise.addEventListener('click', () => {
   if (risen) return;
   risen = true;
-  topCylinder.style.display = 'block';
+  redSection.style.display = 'block';
+  drawWrapped(0); // fully wrapped
+  drawFlat(0);
   btnRise.style.display = 'none';
   btnReset.style.display = 'inline-block';
   sliderGroup.style.opacity = '1';
   sliderGroup.style.pointerEvents = 'auto';
 
-  // Animate: red cylinder rises from top of base
-  const body = topCylinder.querySelector('rect');
-  const topEll = topCylinder.querySelectorAll('ellipse')[1];
-  const botEll = topCylinder.querySelectorAll('ellipse')[0];
+  // Animate rise
+  const origTop = 200;
   let h = 0;
   const anim = setInterval(() => {
     h += 3;
     if (h >= 70) { h = 70; clearInterval(anim); }
-    body.setAttribute('y', 200 - h);
-    body.setAttribute('height', h);
-    topEll.setAttribute('cy', 200 - h);
+    const topY = origTop - h;
+    redTop.setAttribute('cy', topY);
+    // Redraw wrapped with new position
+    drawWrapped(parseFloat(slider.value) / 100 * Math.PI * 2);
   }, 16);
 });
 
@@ -160,8 +260,7 @@ btnRise.addEventListener('click', () => {
 btnReset.addEventListener('click', () => {
   risen = false;
   slider.value = 0;
-  topCylinder.style.display = 'none';
-  flatGroup.style.display = 'none';
+  redSection.style.display = 'none';
   btnRise.style.display = 'inline-block';
   btnReset.style.display = 'none';
   sliderGroup.style.opacity = '0.3';
@@ -172,35 +271,10 @@ btnReset.addEventListener('click', () => {
 slider.addEventListener('input', (e) => {
   if (!risen) return;
   const p = e.target.value / 100;
+  const angle = p * Math.PI * 2;
 
-  if (p < 0.05) {
-    // Fully wrapped: show as cylinder on top
-    topCylinder.style.display = 'block';
-    flatGroup.style.display = 'none';
-  } else {
-    // Unrolling: hide cylinder, show flat rect extending right
-    topCylinder.style.display = 'none';
-    flatGroup.style.display = 'block';
-
-    const maxW = 280;
-    const w = p * maxW;
-    const h = 50;
-    const startX = 175;
-    const y = 105;
-
-    flatRect.setAttribute('x', startX);
-    flatRect.setAttribute('y', y);
-    flatRect.setAttribute('width', w);
-    flatRect.setAttribute('height', h);
-
-    if (p > 0.4) {
-      flatWLabel.style.display = 'block';
-      flatWLabel.setAttribute('x', startX + w / 2);
-      flatWLabel.setAttribute('y', y + h / 2 + 4);
-    } else {
-      flatWLabel.style.display = 'none';
-    }
-  }
+  drawWrapped(angle);
+  drawFlat(angle);
 });
 
 // === SHOW DATA ===
