@@ -14,75 +14,53 @@
   </header>
 
   <main class="demo-area">
-    <svg class="visualization" viewBox="0 0 600 450" id="main-svg">
+    <svg class="visualization" viewBox="0 0 650 450" id="svg">
       <defs>
-        <linearGradient id="tealGrad" x1="0" y1="0" x2="1" y2="1">
+        <linearGradient id="tg" x1="0" y1="0" x2="1" y2="1">
           <stop offset="0%" stop-color="#1ABC9C"/>
           <stop offset="100%" stop-color="#16A085"/>
         </linearGradient>
-        <linearGradient id="redGrad" x1="1" y1="0" x2="0" y2="0">
+        <linearGradient id="rg" x1="1" y1="0" x2="0" y2="0">
           <stop offset="0%" stop-color="#C0392B"/>
           <stop offset="100%" stop-color="#E74C3C"/>
         </linearGradient>
       </defs>
 
-      <rect x="0" y="0" width="600" height="450" fill="#2D2D2D"/>
-      <g stroke="#3a3a3a" stroke-width="0.5">
-        <line x1="0" y1="100" x2="600" y2="100"/><line x1="0" y1="200" x2="600" y2="200"/>
-        <line x1="0" y1="300" x2="600" y2="300"/><line x1="150" y1="0" x2="150" y2="450"/>
-        <line x1="250" y1="0" x2="250" y2="450"/><line x1="350" y1="0" x2="350" y2="450"/>
-      </g>
+      <rect width="650" height="450" fill="#2D2D2D"/>
 
-      <!-- CYLINDER GROUP (wobbles) -->
-      <g id="cyl-group">
+      <!-- CYLINDER (wobbles as group) -->
+      <g id="cyl-g">
+        <!-- Base cylinder -->
+        <rect x="225" y="220" width="150" height="110" fill="url(#tg)" stroke="#fff" stroke-width="2"/>
+        <ellipse cx="300" cy="330" rx="75" ry="22" fill="#16A085" stroke="#fff" stroke-width="2"/>
+        <ellipse cx="300" cy="220" rx="75" ry="22" fill="#1ABC9C" stroke="#fff" stroke-width="2"/>
 
-        <!-- BASE: original cylinder -->
-        <g id="base-cyl">
-          <rect x="175" y="200" width="150" height="120" fill="url(#tealGrad)" stroke="white" stroke-width="2"/>
-          <ellipse cx="250" cy="320" rx="75" ry="25" fill="#16A085" stroke="white" stroke-width="2"/>
-          <ellipse cx="250" cy="200" rx="75" ry="25" fill="#1ABC9C" stroke="white" stroke-width="2"/>
-        </g>
-
-        <!-- ADDED SECTION: green body + red skin on top -->
-        <!-- Structure: green body inside, red skin wraps around it -->
-        <g id="added-section" style="display:none">
-          
-          <!-- RED SKIN (outer layer, wraps around the added section) -->
-          <!-- When slider=0: red skin fully wraps around (looks like red cylinder) -->
-          <!-- When slider>0: red skin peels off to the left, revealing green underneath -->
-          
-          <!-- Green inner body (always shown for the added height) -->
-          <rect id="green-inner" x="175" y="130" width="150" height="70" fill="url(#tealGrad)" stroke="white" stroke-width="2"/>
-          <ellipse id="green-inner-bot" cx="250" cy="200" rx="75" ry="25" fill="#16A085"/>
-          
-          <!-- Green top (always on top, never peels) -->
-          <ellipse id="green-top" cx="250" cy="130" rx="75" ry="25" fill="#1ABC9C" stroke="white" stroke-width="2"/>
-
-          <!-- Red skin that wraps and peels -->
-          <g id="red-skin">
-            <!-- Wrapped portion (covers the green body, shrinks as slider moves) -->
-            <path id="red-wrap" d="" fill="url(#redGrad)" stroke="white" stroke-width="2"/>
-            
-            <!-- Flat peeled portion (extends left) -->
-            <path id="red-flat" d="" fill="url(#redGrad)" stroke="white" stroke-width="2"/>
-            
-            <!-- Curve connecting wrap to flat -->
-            <path id="red-curve" d="" fill="url(#redGrad)" stroke="white" stroke-width="2"/>
-          </g>
+        <!-- Added section - GREEN inner body -->
+        <g id="added" style="display:none">
+          <rect id="g-body" x="225" y="150" width="150" height="70" fill="url(#tg)" stroke="#fff" stroke-width="2"/>
+          <ellipse cx="300" cy="220" rx="75" ry="22" fill="#16A085"/>
+          <!-- Green top - always stays -->
+          <ellipse id="g-top" cx="300" cy="150" rx="75" ry="22" fill="#1ABC9C" stroke="#fff" stroke-width="2"/>
         </g>
       </g>
 
-      <!-- DATA LABELS -->
+      <!-- RED SKIN - peels left, NOT in wobble group so it stays still -->
+      <g id="red-g" style="display:none">
+        <!-- This is the peeling red surface -->
+        <path id="red-peel" d="" fill="url(#rg)" stroke="#fff" stroke-width="2"/>
+      </g>
+
+      <!-- DATA -->
       <g id="data-labels" style="display:none">
-        <line x1="340" y1="200" x2="340" y2="320" stroke="#1ABC9C" stroke-width="2" stroke-dasharray="5,3"/>
-        <line x1="335" y1="200" x2="345" y2="200" stroke="#1ABC9C" stroke-width="2"/>
-        <line x1="335" y1="320" x2="345" y2="320" stroke="#1ABC9C" stroke-width="2"/>
-        <text x="350" y="265" fill="#1ABC9C" font-size="14" font-weight="bold">原高=10cm</text>
-        <line x1="375" y1="130" x2="375" y2="200" stroke="#E74C3C" stroke-width="2" stroke-dasharray="5,3"/>
-        <line x1="370" y1="130" x2="380" y2="130" stroke="#E74C3C" stroke-width="2"/>
-        <line x1="370" y1="200" x2="380" y2="200" stroke="#E74C3C" stroke-width="2"/>
-        <text x="385" y="170" fill="#E74C3C" font-size="14" font-weight="bold">增高=5cm</text>
-        <text x="250" y="400" text-anchor="middle" fill="#FFD700" font-size="18" font-weight="bold">增加的表面积 = 628 cm²</text>
+        <line x1="390" y1="220" x2="390" y2="330" stroke="#1ABC9C" stroke-width="2" stroke-dasharray="5,3"/>
+        <line x1="385" y1="220" x2="395" y2="220" stroke="#1ABC9C" stroke-width="2"/>
+        <line x1="385" y1="330" x2="395" y2="330" stroke="#1ABC9C" stroke-width="2"/>
+        <text x="400" y="280" fill="#1ABC9C" font-size="14" font-weight="bold">原高=10cm</text>
+        <line x1="420" y1="150" x2="420" y2="220" stroke="#E74C3C" stroke-width="2" stroke-dasharray="5,3"/>
+        <line x1="415" y1="150" x2="425" y2="150" stroke="#E74C3C" stroke-width="2"/>
+        <line x1="415" y1="220" x2="425" y2="220" stroke="#E74C3C" stroke-width="2"/>
+        <text x="430" y="190" fill="#E74C3C" font-size="14" font-weight="bold">增高=5cm</text>
+        <text x="300" y="400" text-anchor="middle" fill="#FFD700" font-size="18" font-weight="bold">增加的表面积 = 628 cm²</text>
       </g>
     </svg>
 
@@ -94,9 +72,7 @@
       <div class="data-row"><span class="data-label">增高后总高</span><span class="data-value">15 cm</span></div>
       <div class="data-row"><span class="data-label">底面周长 2πr</span><span class="data-value">62.8 cm</span></div>
       <div class="data-row highlight"><span class="data-label">增加的侧面积</span><span class="data-value">628 cm²</span></div>
-      <div class="formula">
-        <strong>计算过程：</strong><br>ΔS = 2πr × Δh = 2×3.14×10×5 = <strong style="color:#FFD700">628 cm²</strong>
-      </div>
+      <div class="formula"><strong>计算：</strong><br>ΔS = 2πr × Δh = 2×3.14×10×5 = <strong style="color:#FFD700">628 cm²</strong></div>
     </div>
   </main>
 
@@ -104,167 +80,173 @@
     <button class="btn btn-primary" id="btn-rise">⬆ 上升</button>
     <button class="btn btn-reset-btn" id="btn-reset" style="display:none">↻ 复原</button>
     <button class="btn btn-primary" id="btn-data">📊 显示数据</button>
-    <div class="slider-group" id="slider-group" style="opacity:0.3;pointer-events:none">
+    <div class="slider-group" id="sl-g" style="opacity:0.3;pointer-events:none">
       <span class="slider-label">滑块拉开（右）:</span>
       <input type="range" id="slider" min="0" max="100" value="0" class="slider">
     </div>
   </div>
-
   <footer><p>圆柱体侧面积可视化演示 © 2026</p></footer>
 </div>
 
 <script>
-const $ = id => document.getElementById(id);
-const slider = $('slider'), btnRise = $('btn-rise'), btnReset = $('btn-reset'), btnData = $('btn-data');
-const sliderGroup = $('slider-group'), cylGroup = $('cyl-group');
-const addedSection = $('added-section');
-const greenInner = $('green-inner'), greenTop = $('green-top'), greenInnerBot = $('green-inner-bot');
-const redWrap = $('red-wrap'), redFlat = $('red-flat'), redCurve = $('red-curve');
-const dataLabels = $('data-labels'), dataPanel = $('data-panel');
+const $=id=>document.getElementById(id);
+const CX=300, YT=150, YB=220, RX=75, RY=22, BH=70;
+let risen=false, showData=false, wId=null, wT=0;
 
-const CX=250, YT=130, YB=200, RX=75, RY=25, BH=70;
-let risen=false, showData=false, wobbleId=null, wobbleT=0;
-
-// Draw the red skin based on peel progress (0=fully wrapped, 1=fully peeled)
-function drawSkin(p) {
+function drawRed(p) {
+  // p: 0=fully wrapped, 1=fully peeled left
+  const redG = $('red-g');
+  const path = $('red-peel');
+  
   if (p <= 0.01) {
-    // Fully wrapped: red skin covers entire added section body
-    // Draw as full cylinder body
-    redWrap.setAttribute('d',
-      `M ${CX-RX} ${YT} L ${CX-RX} ${YB} A ${RX} ${RY} 0 0 0 ${CX+RX} ${YB} L ${CX+RX} ${YT} A ${RX} ${RY} 0 0 1 ${CX-RX} ${YT} Z`
+    // Fully wrapped: red band around the added section body
+    const leftX = CX - RX; // 225
+    const rightX = CX + RX; // 375
+    path.setAttribute('d',
+      `M ${leftX} ${YT} L ${leftX} ${YB} ` +
+      `A ${RX} ${RY} 0 0 0 ${rightX} ${YB} ` +
+      `L ${rightX} ${YT} ` +
+      `A ${RX} ${RY} 0 0 1 ${leftX} ${YT} Z`
     );
-    redFlat.setAttribute('d', '');
-    redCurve.setAttribute('d', '');
-  } else {
-    // Peeling: skin comes off from left side of cylinder
-    // Wrap angle decreases, flat rect extends left
-    
-    const wrapAngle = (1 - p) * Math.PI * 2; // remaining wrap
-    const flatW = p * 220; // flat portion width
-    
-    if (wrapAngle < 0.05) {
-      // Fully unwrapped
-      redWrap.setAttribute('d', '');
-      redFlat.setAttribute('d',
-        `M ${CX-RX} ${YT} L ${CX-RX-flatW} ${YT} L ${CX-RX-flatW} ${YB} L ${CX-RX} ${YB} Z`
-      );
-      redCurve.setAttribute('d', '');
-    } else {
-      // Partially wrapped + flat + curve connecting them
-      
-      // Wrapped part: arc from peelPoint around right side back to peelPoint
-      const peelAngle = p * Math.PI * 2; // angle peeled so far
-      // Peel starts at left (PI), goes clockwise
-      // peelPoint is at angle (PI + peelAngle) on the ellipse
-      const pa = Math.PI + peelAngle;
-      // Clamp to 2*PI (right side)
-      const effAngle = Math.min(pa, Math.PI * 2);
-      
-      const peelX = CX + RX * Math.cos(effAngle);
-      const peelYT = YT + RY * Math.sin(effAngle); // top peel point  
-      const peelYB = peelYT + BH; // bottom peel point
-
-      // Wrap arc: from peelPoint, around right, back to left side (PI)
-      const leftX = CX + RX * Math.cos(Math.PI);
-      const leftYT = YT + RY * Math.sin(Math.PI);
-      
-      if (wrapAngle > Math.PI) {
-        // Large arc
-        redWrap.setAttribute('d',
-          `M ${peelX} ${peelYT} L ${peelX} ${peelYB} A ${RX} ${RY} 0 1 0 ${leftX} ${leftYT+BH} L ${leftX} ${leftYT} A ${RX} ${RY} 0 1 1 ${peelX} ${peelYT} Z`
-        );
-      } else {
-        redWrap.setAttribute('d',
-          `M ${peelX} ${peelYT} L ${peelX} ${peelYB} A ${RX} ${RY} 0 0 0 ${leftX} ${leftYT+BH} L ${leftX} ${leftYT} A ${RX} ${RY} 0 0 1 ${peelX} ${peelYT} Z`
-        );
-      }
-
-      // Flat rect: extends left from left side of cylinder
-      redFlat.setAttribute('d',
-        `M ${leftX} ${leftYT} L ${leftX-flatW} ${leftYT} L ${leftX-flatW} ${leftYT+BH} L ${leftX} ${leftYT+BH} Z`
-      );
-
-      // Curve: connects peelPoint to flat rect left edge (smooth transition)
-      const curveSize = 15;
-      redCurve.setAttribute('d',
-        `M ${leftX} ${leftYT} ` +
-        `Q ${leftX - curveSize} ${leftYT - curveSize*0.8} ${peelX} ${peelYT} ` +
-        `L ${peelX} ${peelYB} ` +
-        `Q ${leftX - curveSize} ${leftYT+BH + curveSize*0.8} ${leftX} ${leftYT+BH} Z`
-      );
-    }
+    redG.style.display = 'block';
+    return;
   }
+
+  // Peeling: red skin peels from the LEFT side of the cylinder
+  // The peel point travels around from left side
+  // The flat part extends to the left
+  
+  const peelAngle = p * Math.PI; // 0 to PI (peel goes from left to right, unwrapping half)
+  // At p=0: peel point is at left (angle = PI)
+  // At p=1: peel point is at right (angle = 0)
+  // So remaining wrap angle = PI - peelAngle
+  
+  // Peel point on top ellipse
+  const angle = Math.PI - peelAngle; // starts at PI (left), goes to 0 (right)
+  const px = CX + RX * Math.cos(angle);
+  const pyT = YT + RY * Math.sin(angle); // top edge peel point
+  const pyB = pyT + BH; // bottom edge peel point
+
+  // Left side of cylinder (always the attachment point for flat rect)
+  const lx = CX - RX;
+  const lyT = YT + RY * Math.sin(Math.PI); // = YT (sin PI = 0)
+  const lyB = lyT + BH;
+
+  // Flat rect extends left from lx
+  const flatW = p * 200;
+
+  // The path: 
+  // 1. Start at left side top of flat rect
+  // 2. Go right along flat top to cylinder left edge
+  // 3. Curve up along cylinder surface to peel point (top)
+  // 4. Down from peel point top to peel point bottom
+  // 5. Curve back along cylinder bottom to left side bottom
+  // 6. Go left along flat bottom back to start
+  
+  const curveR = 20; // radius of the peel curve
+  const bulge = p * 25; // how much the curve bulges out
+  
+  // Simple approach: flat rect on left + arc on cylinder + smooth transition
+  const topFlat = `M ${lx - flatW} ${YT} L ${lx} ${YT}`;
+  const bottomFlat = `L ${lx} ${YB} L ${lx - flatW} ${YB}`;
+  
+  let arcPart;
+  if (peelAngle < 0.05) {
+    // Almost fully unwrapped
+    arcPart = '';
+  } else {
+    // Arc on cylinder surface from left side to peel point
+    const largeArc = peelAngle > Math.PI / 2 ? 1 : 0;
+    arcPart = 
+      `A ${RX} ${RY} 0 ${largeArc} 0 ${px} ${pyT} ` + // top arc
+      `L ${px} ${pyB} ` + // right side down
+      `A ${RX} ${RY} 0 ${largeArc} 1 ${lx} ${YB}`; // bottom arc back
+  }
+
+  // Smooth peel curve between flat and arc
+  const peelCurve = 
+    `Q ${lx - bulge} ${YT - curveR} ${px} ${pyT} ` + // top curve
+    `L ${px} ${pyB} ` + // down
+    `Q ${lx - bulge} ${YB + curveR} ${lx} ${YB}`; // bottom curve
+
+  let d;
+  if (p < 0.05) {
+    d = `M ${lx} ${YT} L ${lx} ${YB} A ${RX} ${RY} 0 0 0 ${CX+RX} ${YB} L ${CX+RX} ${YT} A ${RX} ${RY} 0 0 1 ${lx} ${YT} Z`;
+  } else {
+    d = `M ${lx - flatW} ${YT} L ${lx} ${YT} ` +
+        peelCurve + ` Z`;
+  }
+
+  path.setAttribute('d', d);
+  redG.style.display = 'block';
 }
 
-// === RISE ===
-btnRise.addEventListener('click', () => {
+// RISE
+$('btn-rise').onclick = () => {
   if (risen) return;
   risen = true;
-  addedSection.style.display = 'block';
-  btnRise.style.display = 'none';
-  btnReset.style.display = 'inline-block';
-  sliderGroup.style.opacity = '1';
-  sliderGroup.style.pointerEvents = 'auto';
+  $('added').style.display = 'block';
+  $('btn-rise').style.display = 'none';
+  $('btn-reset').style.display = 'inline-block';
+  $('sl-g').style.opacity = '1';
+  $('sl-g').style.pointerEvents = 'auto';
 
-  // Animate rising - green body with red skin
   let h = 0;
   const anim = setInterval(() => {
     h += 3;
     if (h >= BH) { h = BH; clearInterval(anim); }
-    const topY = YB - h;
-    greenInner.setAttribute('y', topY);
-    greenInner.setAttribute('height', h);
-    greenTop.setAttribute('cy', topY);
-    // Update red skin each frame
-    drawSkin(parseFloat(slider.value) / 100);
+    $('g-body').setAttribute('y', YB - h);
+    $('g-body').setAttribute('height', h);
+    $('g-top').setAttribute('cy', YB - h);
   }, 16);
-});
+  // Show red skin after rise completes
+  setTimeout(() => drawRed(0), 500);
+};
 
-// === RESET ===
-btnReset.addEventListener('click', () => {
+// RESET
+$('btn-reset').onclick = () => {
   risen = false;
   slider.value = 0;
-  addedSection.style.display = 'none';
-  btnRise.style.display = 'inline-block';
-  btnReset.style.display = 'none';
-  sliderGroup.style.opacity = '0.3';
-  sliderGroup.style.pointerEvents = 'none';
-  cylGroup.setAttribute('transform', '');
-  if (wobbleId) cancelAnimationFrame(wobbleId);
-});
+  $('added').style.display = 'none';
+  $('red-g').style.display = 'none';
+  $('btn-rise').style.display = 'inline-block';
+  $('btn-reset').style.display = 'none';
+  $('sl-g').style.opacity = '0.3';
+  $('sl-g').style.pointerEvents = 'none';
+  $('cyl-g').setAttribute('transform', '');
+  if (wId) cancelAnimationFrame(wId);
+};
 
-// === SLIDER ===
-slider.addEventListener('input', (e) => {
+// SLIDER
+const slider = $('slider');
+slider.oninput = () => {
   if (!risen) return;
-  const p = e.target.value / 100;
-  drawSkin(p);
+  const p = slider.value / 100;
+  drawRed(p);
   startWobble();
-});
+};
 
-// === WOBBLE ===
+// WOBBLE
 function startWobble() {
-  wobbleT = Date.now();
-  if (wobbleId) cancelAnimationFrame(wobbleId);
-  doWobble();
+  wT = Date.now();
+  if (wId) cancelAnimationFrame(wId);
+  doW();
 }
-function doWobble() {
-  const t = Date.now() - wobbleT;
-  const a = Math.sin(t * 0.012) * 2.5 * Math.max(0, 1 - t / 500);
-  cylGroup.setAttribute('transform', `rotate(${a} 250 250)`);
-  if (t < 500) wobbleId = requestAnimationFrame(doWobble);
-  else cylGroup.setAttribute('transform', '');
+function doW() {
+  const t = Date.now() - wT;
+  const a = Math.sin(t*0.012) * 2.5 * Math.max(0, 1-t/500);
+  $('cyl-g').setAttribute('transform', `rotate(${a} 300 260)`);
+  if (t < 500) wId = requestAnimationFrame(doW);
+  else $('cyl-g').setAttribute('transform', '');
 }
 
-// === DATA ===
-btnData.addEventListener('click', () => {
+// DATA
+$('btn-data').onclick = () => {
   showData = !showData;
-  dataPanel.style.display = showData ? 'flex' : 'none';
-  dataLabels.style.display = (showData && risen) ? 'block' : 'none';
-  btnData.textContent = showData ? '🔽 隐藏数据' : '📊 显示数据';
-});
-
-// Init
-drawSkin(0);
+  $('data-panel').style.display = showData ? 'flex' : 'none';
+  $('data-labels').style.display = (showData && risen) ? 'block' : 'none';
+  $('btn-data').textContent = showData ? '🔽 隐藏数据' : '📊 显示数据';
+};
 </script>
 </body>
 </html>
