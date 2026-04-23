@@ -113,69 +113,29 @@ function drawRed(p) {
   }
 
   // Peeling: red skin peels from the LEFT side of the cylinder
-  // The peel point travels around from left side
-  // The flat part extends to the left
-  
-  const peelAngle = p * Math.PI; // 0 to PI (peel goes from left to right, unwrapping half)
-  // At p=0: peel point is at left (angle = PI)
-  // At p=1: peel point is at right (angle = 0)
-  // So remaining wrap angle = PI - peelAngle
-  
-  // Peel point on top ellipse
-  const angle = Math.PI - peelAngle; // starts at PI (left), goes to 0 (right)
+  const peelAngle = p * Math.PI;
+  const angle = Math.PI - peelAngle;
   const px = CX + RX * Math.cos(angle);
-  const pyT = YT + RY * Math.sin(angle); // top edge peel point
-  const pyB = pyT + BH; // bottom edge peel point
+  const pyT = YT + RY * Math.sin(angle);
+  const pyB = pyT + BH;
 
-  // Left side of cylinder (always the attachment point for flat rect)
   const lx = CX - RX;
-  const lyT = YT + RY * Math.sin(Math.PI); // = YT (sin PI = 0)
-  const lyB = lyT + BH;
+  const lyT = YT;
+  const lyB = YB;
 
-  // Flat rect extends left from lx
-  const flatW = p * 200;
+  // Flat rect width proportional to peeled arc length
+  const halfCircumference = Math.PI * RX;
+  const flatW = p * halfCircumference;
 
-  // The path: 
-  // 1. Start at left side top of flat rect
-  // 2. Go right along flat top to cylinder left edge
-  // 3. Curve up along cylinder surface to peel point (top)
-  // 4. Down from peel point top to peel point bottom
-  // 5. Curve back along cylinder bottom to left side bottom
-  // 6. Go left along flat bottom back to start
-  
-  const curveR = 20; // radius of the peel curve
-  const bulge = p * 25; // how much the curve bulges out
-  
-  // Simple approach: flat rect on left + arc on cylinder + smooth transition
-  const topFlat = `M ${lx - flatW} ${YT} L ${lx} ${YT}`;
-  const bottomFlat = `L ${lx} ${YB} L ${lx - flatW} ${YB}`;
-  
-  let arcPart;
-  if (peelAngle < 0.05) {
-    // Almost fully unwrapped
-    arcPart = '';
-  } else {
-    // Arc on cylinder surface from left side to peel point
-    const largeArc = peelAngle > Math.PI / 2 ? 1 : 0;
-    arcPart = 
-      `A ${RX} ${RY} 0 ${largeArc} 0 ${px} ${pyT} ` + // top arc
-      `L ${px} ${pyB} ` + // right side down
-      `A ${RX} ${RY} 0 ${largeArc} 1 ${lx} ${YB}`; // bottom arc back
-  }
-
-  // Smooth peel curve between flat and arc
-  const peelCurve = 
-    `Q ${lx - bulge} ${YT - curveR} ${px} ${pyT} ` + // top curve
-    `L ${px} ${pyB} ` + // down
-    `Q ${lx - bulge} ${YB + curveR} ${lx} ${YB}`; // bottom curve
-
-  let d;
-  if (p < 0.05) {
-    d = `M ${lx} ${YT} L ${lx} ${YB} A ${RX} ${RY} 0 0 0 ${CX+RX} ${YB} L ${CX+RX} ${YT} A ${RX} ${RY} 0 0 1 ${lx} ${YT} Z`;
-  } else {
-    d = `M ${lx - flatW} ${YT} L ${lx} ${YT} ` +
-        peelCurve + ` Z`;
-  }
+  // Build path: flat rect (left) + arc on cylinder (right)
+  const d =
+    `M ${lx - flatW} ${lyT} ` +           // top-left of flat rect
+    `L ${lx} ${lyT} ` +                   // right to cylinder left edge (top)
+    `A ${RX} ${RY} 0 0 0 ${px} ${pyT} ` + // arc along cylinder top to peel point
+    `L ${px} ${pyB} ` +                   // straight down at peel point
+    `A ${RX} ${RY} 0 0 1 ${lx} ${lyB} ` + // arc back along cylinder bottom
+    `L ${lx - flatW} ${lyB} ` +           // left to close (bottom)
+    `Z`;
 
   path.setAttribute('d', d);
   redG.style.display = 'block';
